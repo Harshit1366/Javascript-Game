@@ -1,0 +1,250 @@
+<html>
+<head>
+<title>My first Game</title>
+<style>
+#mycanvas{
+border:5px solid orange;
+background-image: url("Assets/background.jpg") ;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="mycanvas" width="1000px" height="600px">
+
+</canvas>
+
+<script>
+var canvas = document.getElementById("mycanvas");
+console.log(canvas);
+var pen=canvas.getContext('2d');
+//pen.fillStyle="blue";
+//pen.fillRect(20,30,50,50);
+
+function init()
+{
+GAME_WIDTH=1000;
+GAME_HEIGHT=600;
+GAME_RUNNING=true;
+//initialise the objects
+object={
+x:0,
+y:300,
+w:80,
+h:80,
+}
+enemy=[{
+x : 100,
+y : 80,
+w : 50,
+h : 50,
+speedY : 5,
+},
+{
+x : 200,
+y : 120,
+w : 50,
+h : 50,
+speedY : 2,
+},
+{
+x : 300,
+y : 180,
+w : 50,
+h : 50,
+speedY : 9,
+},
+{
+x : 400,
+y : 200,
+w : 50,
+h : 50,
+speedY : 6,
+},
+{
+x : 500,
+y : 220,
+w : 50,
+h : 50,
+speedY : 4,
+},
+{
+x : 600,
+y : 90,
+w : 50,
+h : 50,
+speedY : 10,
+},
+{
+x : 700,
+y : 70,
+w : 50,
+h : 50,
+speedY : 3,
+},
+{
+x : 800,
+y : 30,
+w : 50,
+h : 50,
+speedY : 5,
+},
+{
+x : 900,
+y : 110,
+w : 50,
+h : 50,
+speedY : 8,
+},
+];
+player={
+x : 0,
+y : 220,
+w : 50,
+h : 50,
+speedX : 0,
+speedY : 0,
+};
+goal={
+x : 950,
+y : 220,
+w : 50,
+h : 50,
+};
+
+playerImg = new Image;
+    playerImg.src = "Assets/pika.png";
+	enemyImg = new Array();
+	for(i=0;i<9;i++)
+	{
+    enemyImg[i] = new Image();
+   enemyImg[i].src = "Assets/enemy.png";
+  }
+   goalImg = new Image;
+  goalImg.src = "Assets/poki.png";
+objectImg=new Image;
+objectImg.src="Assets/gr.png";
+  
+canvas.addEventListener('mousedown',function(){
+player.speedX=5;
+});
+canvas.addEventListener('mouseup',function(){
+player.speedX=0;
+});
+document.addEventListener('keydown',function(e){
+console.log(e);
+if(e.key=="ArrowLeft"){
+player.x -= 10;}
+if(e.key=="j")
+{
+player.speedX=1;
+player.speedY=-2;
+player.speedX=2;
+player.speedY=-4;
+player.speedX=3;
+player.speedY=-6;
+player.speedX=4;
+player.speedY=-4;
+player.speedX=5;
+player.speedY=-2;
+jump=true;
+}
+
+if(e.key=="ArrowRight"){
+player.x += 10; }
+
+/*if(e.key=="ArrowUp"){
+player.y -= 10; }*/
+
+if(e.key=="ArrowDown"){
+player.y += 10; }
+});
+}
+function isColliding(r1,r2)
+{
+var x_axis = Math.abs(r1.x - r2.x)<=r1.w;
+var y_axis = Math.abs(r1.y - r2.y)<=r1.h;
+return x_axis && y_axis;
+}
+function draw()
+{
+pen.clearRect(0,0,GAME_WIDTH,GAME_HEIGHT);
+for(var i=0;i<9;i++)
+{
+pen.drawImage(enemyImg[i],enemy[i].x,enemy[i].y,enemy[i].w,enemy[i].h);
+
+//pen.fillRect(enemy[i].x,enemy[i].y,enemy[i].w,enemy[i].h);
+}
+//pen.drawImage(enemImg[1],player.x,player.y,player.w,player.h);
+pen.drawImage(objectImg,object.x,object.y,object.w,object.h);
+pen.drawImage(playerImg,player.x,player.y,player.w,player.h);
+pen.drawImage(goalImg,goal.x,goal.y,goal.w,goal.h);
+}
+
+
+
+function update()
+{
+
+for(var i=0;i<9;i++){
+enemy[i].y += enemy[i].speedY;
+if(enemy[i].y>=GAME_HEIGHT-enemy[i].h || enemy[i].y <=0)
+{
+enemy[i].speedY *= -1;}}
+
+player.x += player.speedX;
+player.y += player.speedY;
+if(player.y==object.y)
+{
+player.y=260;}
+if(player.x<=0)
+{
+player.x-=player.x;}
+if(player.x>=GAME_WIDTH)
+{
+player.x=+player.x;
+}
+if(player.y>=GAME_HEIGHT)
+{
+player.y=+player.y;
+}
+if(player.y<=0)
+{
+player.y-=player.y;
+}
+ for(var i=0;i<9;i++){
+if(isColliding(player,enemy[i])){
+alert("GAME OVER ! ");
+GAME_RUNNING=false;
+}}
+if(isColliding(player,goal)){
+alert("GAME WON ! ");
+GAME_RUNNING=false;
+}
+}
+//GAME LOOP
+function render()
+{
+console.log("in render");
+draw();
+update();
+if(GAME_RUNNING==true)
+{
+window.requestAnimationFrame(render);
+}
+else
+{
+startGame();}
+}
+
+function startGame()
+{
+init();
+render();
+}
+startGame();
+</script>
+</body>
+
+</html>
